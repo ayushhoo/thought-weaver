@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Mic, MicOff, Play, Square } from 'lucide-react';
+import { Mic, Square } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface BrainDumpProps {
   onComplete: (transcript: string) => void;
@@ -8,13 +9,21 @@ interface BrainDumpProps {
 
 export function BrainDump({ onComplete }: BrainDumpProps) {
   const [isRecording, setIsRecording] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [timeLeft, setTimeLeft] = useState(120);
   const [hasRecorded, setHasRecorded] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  const stopRecording = useCallback(() => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (isRecording && timeLeft > 0) {
@@ -28,11 +37,57 @@ export function BrainDump({ onComplete }: BrainDumpProps) {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [isRecording, timeLeft]);
+  }, [isRecording, timeLeft, stopRecording]);
+
+  const transcribeAudio = async (audioBlob: Blob) => {
+    setIsTranscribing(true);
+    
+    try {
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'recording.webm');
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/transcribe`,
+        {
+          method: 'POST',
+          headers: {
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Transcription failed');
+      }
+
+      const data = await response.json();
+      const transcript = data.text || '';
+      
+      if (!transcript.trim()) {
+        toast.error("Couldn't detect any speech. Please try again.");
+        setHasRecorded(false);
+        setTimeLeft(120);
+        return;
+      }
+
+      onComplete(transcript);
+    } catch (error) {
+      console.error('Transcription error:', error);
+      toast.error('Failed to transcribe audio. Please try again.');
+      setHasRecorded(false);
+      setTimeLeft(120);
+    } finally {
+      setIsTranscribing(false);
+    }
+  };
 
   const startRecording = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
@@ -45,36 +100,23 @@ export function BrainDump({ onComplete }: BrainDumpProps) {
 
       mediaRecorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-        setAudioBlob(blob);
+        streamRef.current?.getTracks().forEach(track => track.stop());
         setHasRecorded(true);
-        stream.getTracks().forEach(track => track.stop());
+        transcribeAudio(blob);
       };
 
       mediaRecorder.start();
       setIsRecording(true);
     } catch (err) {
       console.error('Error accessing microphone:', err);
+      toast.error('Could not access microphone. Please check permissions.');
     }
   }, []);
-
-  const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-    }
-  }, [isRecording]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const handleContinue = () => {
-    // In a real app, this would transcribe the audio
-    // For now, we'll simulate with placeholder text
-    const sampleTranscript = "I'm feeling really overwhelmed about my upcoming presentation. I keep thinking about all the ways it could go wrong. What if I forget what to say? What if people think I'm not prepared? And on top of that, I have this deadline at work that I'm not sure I can meet. Everything feels like it's piling up...";
-    onComplete(sampleTranscript);
   };
 
   return (
@@ -106,11 +148,10 @@ export function BrainDump({ onComplete }: BrainDumpProps) {
           size="iconLg"
           className="w-24 h-24 rounded-full relative z-10"
           onClick={isRecording ? stopRecording : startRecording}
+          disabled={isTranscribing || hasRecorded}
         >
           {isRecording ? (
             <Square className="w-8 h-8" />
-          ) : hasRecorded ? (
-            <Play className="w-8 h-8" />
           ) : (
             <Mic className="w-8 h-8" />
           )}
@@ -123,12 +164,18 @@ export function BrainDump({ onComplete }: BrainDumpProps) {
           {formatTime(timeLeft)}
         </p>
         <p className="text-sm text-muted-foreground mt-2">
-          {isRecording ? 'Recording... speak freely' : hasRecorded ? 'Recording complete' : 'Tap to start'}
+          {isTranscribing 
+            ? 'Transcribing your thoughts...' 
+            : isRecording 
+              ? 'Recording... speak freely' 
+              : hasRecorded 
+                ? 'Processing...' 
+                : 'Tap to start'}
         </p>
       </div>
 
       {/* Instructions */}
-      {!isRecording && !hasRecorded && (
+      {!isRecording && !hasRecorded && !isTranscribing && (
         <div className="bg-card rounded-lg p-4 max-w-sm text-center border border-border">
           <p className="text-sm text-muted-foreground">
             <strong className="text-foreground">Tips:</strong> Speak about what's worrying you, 
@@ -137,11 +184,13 @@ export function BrainDump({ onComplete }: BrainDumpProps) {
         </div>
       )}
 
-      {/* Continue button */}
-      {hasRecorded && !isRecording && (
-        <Button variant="hero" size="xl" onClick={handleContinue}>
-          Analyze My Thoughts
-        </Button>
+      {/* Loading indicator */}
+      {isTranscribing && (
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+          <div className="w-2 h-2 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+          <div className="w-2 h-2 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
+        </div>
       )}
     </div>
   );

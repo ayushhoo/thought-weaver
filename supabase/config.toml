@@ -1,1 +1,7 @@
 project_id = "ugvumzjwvocsemjqashu"
+
+[functions.transcribe]
+verify_jwt = false
+
+[functions.extract-worry-graph]
+verify_jwt = false

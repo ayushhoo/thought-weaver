@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import { useSession } from '@/hooks/useSession';
 import { WelcomeScreen } from '@/components/WelcomeScreen';
 import { EmotionPicker } from '@/components/EmotionPicker';
@@ -10,25 +10,52 @@ import { ReframeView } from '@/components/ReframeView';
 import { ReflectionView } from '@/components/ReflectionView';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, X } from 'lucide-react';
-import type { EmotionLevel, Persona, WorryGraph } from '@/types/session';
+import { toast } from 'sonner';
+import type { EmotionLevel, Persona, WorryGraph, APIWorryGraph } from '@/types/session';
 
-// Sample worry graph for demo
-const sampleWorryGraph: WorryGraph = {
-  nodes: [
-    { id: '1', text: 'Fear of failing the presentation', isRoot: true, isNoise: false, x: 40, y: 35 },
-    { id: '2', text: 'Work deadline stress', isRoot: false, isNoise: false, x: 65, y: 20 },
-    { id: '3', text: 'What if I forget my words?', isRoot: false, isNoise: false, x: 20, y: 55 },
-    { id: '4', text: "People might think I'm unprepared", isRoot: false, isNoise: false, x: 60, y: 60 },
-    { id: '5', text: 'Need to buy groceries', isRoot: false, isNoise: true, x: 80, y: 45 },
-    { id: '6', text: "Haven't called mom this week", isRoot: false, isNoise: true, x: 10, y: 25 },
-  ],
-  edges: [
-    { source: '1', target: '2' },
-    { source: '1', target: '3' },
-    { source: '1', target: '4' },
-    { source: '3', target: '4' },
-  ],
-};
+// Transform API response to UI format with calculated positions
+function transformAPIToWorryGraph(apiGraph: APIWorryGraph): WorryGraph {
+  const nodeCount = apiGraph.nodes.length;
+  const centerX = 50;
+  const centerY = 50;
+  const radius = 30;
+
+  // Find root node and place it in center
+  const rootNode = apiGraph.nodes.find(n => n.type === 'root');
+  
+  const nodes = apiGraph.nodes.map((node, index) => {
+    let x: number, y: number;
+    
+    if (node.type === 'root') {
+      x = centerX;
+      y = centerY;
+    } else {
+      // Distribute other nodes in a circle around the root
+      const otherNodes = apiGraph.nodes.filter(n => n.type !== 'root');
+      const nodeIndex = otherNodes.findIndex(n => n.id === node.id);
+      const angle = (2 * Math.PI * nodeIndex) / otherNodes.length - Math.PI / 2;
+      x = centerX + radius * Math.cos(angle) + (Math.random() * 10 - 5);
+      y = centerY + radius * Math.sin(angle) + (Math.random() * 10 - 5);
+    }
+
+    return {
+      id: node.id,
+      text: node.label,
+      fullText: node.fullText,
+      isRoot: node.type === 'root',
+      isNoise: node.type === 'noise',
+      x: Math.max(10, Math.min(85, x)),
+      y: Math.max(10, Math.min(85, y)),
+    };
+  });
+
+  const edges = apiGraph.edges.map(edge => ({
+    source: edge.from,
+    target: edge.to,
+  }));
+
+  return { nodes, edges };
+}
 
 export default function Session() {
   const {
@@ -45,6 +72,7 @@ export default function Session() {
 
   const [tempEmotionBefore, setTempEmotionBefore] = useState<EmotionLevel | null>(null);
   const [tempPersona, setTempPersona] = useState<Persona | null>(null);
+  const transcriptRef = useRef<string>('');
 
   const handleStartSession = useCallback(() => {
     goToStep('emotion-check');
@@ -62,14 +90,45 @@ export default function Session() {
   }, [tempEmotionBefore, setEmotionBefore, goToStep]);
 
   const handleBrainDumpComplete = useCallback((transcript: string) => {
+    transcriptRef.current = transcript;
     setTranscript(transcript);
     goToStep('processing');
   }, [setTranscript, goToStep]);
 
-  const handleProcessingComplete = useCallback(() => {
-    setWorryGraph(sampleWorryGraph);
-    goToStep('worry-graph');
+  const extractWorryGraph = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/extract-worry-graph`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ transcript: transcriptRef.current }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to analyze thoughts');
+      }
+
+      const apiGraph: APIWorryGraph = await response.json();
+      const worryGraph = transformAPIToWorryGraph(apiGraph);
+      setWorryGraph(worryGraph);
+      goToStep('worry-graph');
+    } catch (error) {
+      console.error('Worry graph extraction error:', error);
+      toast.error('Failed to analyze your thoughts. Please try again.');
+      goToStep('brain-dump');
+    }
   }, [setWorryGraph, goToStep]);
+
+  const handleProcessingComplete = useCallback(() => {
+    extractWorryGraph();
+  }, [extractWorryGraph]);
 
   const handleWorryGraphContinue = useCallback(() => {
     goToStep('persona-select');

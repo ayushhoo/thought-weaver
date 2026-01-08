@@ -118,11 +118,14 @@ export function WorryGraphView({ graph, onContinue }: WorryGraphViewProps) {
       {selectedNode && (
         <div className="bg-card rounded-lg p-4 max-w-md w-full border border-border animate-fade-in">
           <div className="flex items-start gap-3">
-            <div className={`w-3 h-3 rounded-full mt-1.5 ${
+            <div className={`w-3 h-3 rounded-full mt-1.5 flex-shrink-0 ${
               selectedNode.isRoot ? 'bg-primary' : selectedNode.isNoise ? 'bg-muted' : 'bg-accent-foreground'
             }`} />
             <div>
               <p className="font-medium text-foreground">{selectedNode.text}</p>
+              {selectedNode.fullText && selectedNode.fullText !== selectedNode.text && (
+                <p className="text-sm text-muted-foreground mt-2">{selectedNode.fullText}</p>
+              )}
               <p className="text-sm text-muted-foreground mt-1">
                 {selectedNode.isRoot 
                   ? '🎯 This appears to be your core concern' 

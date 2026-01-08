@@ -2,9 +2,30 @@ export type EmotionLevel = 1 | 2 | 3 | 4 | 5;
 
 export type Persona = 'stoic' | 'grandma' | 'detective';
 
+// API response types
+export interface APIWorryNode {
+  id: string;
+  label: string;
+  type: 'root' | 'noise' | 'linked';
+  fullText: string;
+}
+
+export interface APIWorryEdge {
+  from: string;
+  to: string;
+  label?: string;
+}
+
+export interface APIWorryGraph {
+  nodes: APIWorryNode[];
+  edges: APIWorryEdge[];
+}
+
+// UI types with positioning
 export interface WorryNode {
   id: string;
   text: string;
+  fullText: string;
   isRoot: boolean;
   isNoise: boolean;
   x: number;
