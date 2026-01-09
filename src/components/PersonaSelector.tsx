@@ -14,22 +14,22 @@ const personas: PersonaOption[] = [
     id: 'stoic',
     emoji: '🏛️',
     name: 'The Stoic Philosopher',
-    description: 'Offers timeless wisdom about focusing on what you can control and letting go of what you cannot.',
-    style: 'Calm, rational, and grounding',
+    description: 'Drawing from ancient Stoic wisdom, I help you distinguish between what you can control and what you cannot. Together, we\'ll find peace by accepting life\'s uncertainties while taking purposeful action where it matters.',
+    style: 'Calm • Rational • Grounding',
   },
   {
     id: 'grandma',
     emoji: '👵',
     name: 'The Compassionate Grandma',
-    description: 'Wraps your worries in warmth and reminds you that everything will be okay, with gentle reassurance.',
-    style: 'Warm, nurturing, and comforting',
+    description: 'Using compassion-focused therapy, I offer the warmth and unconditional acceptance we all need. I\'ll help you treat yourself with the same kindness you\'d show a dear friend, soothing your inner critic with gentle wisdom.',
+    style: 'Warm • Nurturing • Comforting',
   },
   {
     id: 'detective',
     emoji: '🔍',
     name: 'The Logic Detective',
-    description: 'Helps you examine the evidence behind your worries and separate facts from assumptions.',
-    style: 'Analytical, curious, and methodical',
+    description: 'Trained in Cognitive Behavioral Therapy, I help you investigate your thoughts like clues. We\'ll examine the evidence, challenge cognitive distortions, and uncover the truth hidden beneath your worries.',
+    style: 'Analytical • Curious • Methodical',
   },
 ];
 
