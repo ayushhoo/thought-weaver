@@ -56,7 +56,7 @@ export function PersonaSelector({ onSelect, selectedPersona }: PersonaSelectorPr
           <Button
             key={persona.id}
             variant="persona"
-            className={`flex flex-col items-start gap-3 h-auto p-6 text-left ${
+            className={`flex flex-col items-start gap-3 h-auto min-h-[280px] p-6 text-left whitespace-normal ${
               selectedPersona === persona.id 
                 ? 'border-primary bg-accent' 
                 : ''
@@ -64,10 +64,10 @@ export function PersonaSelector({ onSelect, selectedPersona }: PersonaSelectorPr
             onClick={() => onSelect(persona.id)}
           >
             <span className="text-4xl">{persona.emoji}</span>
-            <div className="space-y-1">
-              <h3 className="font-semibold text-lg text-foreground">{persona.name}</h3>
-              <p className="text-sm text-muted-foreground">{persona.description}</p>
-              <p className="text-xs text-primary italic">{persona.style}</p>
+            <div className="space-y-2 flex-1">
+              <h3 className="font-semibold text-lg text-foreground leading-tight">{persona.name}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{persona.description}</p>
+              <p className="text-xs text-primary italic mt-auto">{persona.style}</p>
             </div>
           </Button>
         ))}
