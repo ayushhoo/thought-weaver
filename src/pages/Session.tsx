@@ -1,6 +1,9 @@
 import { useCallback, useState, useRef } from 'react';
 import { useSession } from '@/hooks/useSession';
+import { useAccessibility } from '@/hooks/useAccessibility';
+import { useSessionPersistence } from '@/hooks/useSessionPersistence';
 import { WelcomeScreen } from '@/components/WelcomeScreen';
+import { GuidedOnboarding } from '@/components/GuidedOnboarding';
 import { EmotionPicker } from '@/components/EmotionPicker';
 import { BrainDump } from '@/components/BrainDump';
 import { ProcessingView } from '@/components/ProcessingView';
@@ -9,7 +12,7 @@ import { PersonaSelector } from '@/components/PersonaSelector';
 import { ReframeView } from '@/components/ReframeView';
 import { ReflectionView } from '@/components/ReflectionView';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, X } from 'lucide-react';
+import { ArrowLeft, X, Leaf } from 'lucide-react';
 import { toast } from 'sonner';
 import type { EmotionLevel, Persona, WorryGraph, APIWorryGraph } from '@/types/session';
 
@@ -70,13 +73,31 @@ export default function Session() {
     resetSession,
   } = useSession();
 
+  const { calmMode, toggleCalmMode } = useAccessibility();
+  const { saveSession, addToHistory } = useSessionPersistence();
+
   const [tempEmotionBefore, setTempEmotionBefore] = useState<EmotionLevel | null>(null);
   const [tempPersona, setTempPersona] = useState<Persona | null>(null);
+  const [showGuidedOnboarding, setShowGuidedOnboarding] = useState(false);
   const transcriptRef = useRef<string>('');
 
   const handleStartSession = useCallback(() => {
     goToStep('emotion-check');
   }, [goToStep]);
+
+  const handleStartGuided = useCallback(() => {
+    setShowGuidedOnboarding(true);
+  }, []);
+
+  const handleGuidedComplete = useCallback((graph: WorryGraph) => {
+    setShowGuidedOnboarding(false);
+    setWorryGraph(graph);
+    goToStep('worry-graph');
+  }, [setWorryGraph, goToStep]);
+
+  const handleSkipGuided = useCallback(() => {
+    setShowGuidedOnboarding(false);
+  }, []);
 
   const handleEmotionBeforeSelect = useCallback((level: EmotionLevel) => {
     setTempEmotionBefore(level);
@@ -151,7 +172,9 @@ export default function Session() {
 
   const handleReflectionComplete = useCallback((emotionAfter: EmotionLevel) => {
     setEmotionAfter(emotionAfter);
-  }, [setEmotionAfter]);
+    // Save to history when session completes
+    addToHistory({ ...session, emotionAfter });
+  }, [setEmotionAfter, addToHistory, session]);
 
   const handleStartNew = useCallback(() => {
     resetSession();
@@ -169,24 +192,47 @@ export default function Session() {
     goToStep('welcome');
   }, [goToStep]);
 
-  const showNavigation = currentStep !== 'welcome' && currentStep !== 'processing';
+  const showNavigation = currentStep !== 'welcome' && currentStep !== 'processing' && !showGuidedOnboarding;
+
+  // Show guided onboarding if active
+  if (showGuidedOnboarding) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12">
+        <GuidedOnboarding 
+          onComplete={handleGuidedComplete}
+          onSkip={handleSkipGuided}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation Header */}
       {showNavigation && (
-        <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
+        <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-border">
           <div className="container mx-auto px-4 h-14 flex items-center justify-between">
             <Button variant="ghost" size="sm" onClick={handleBack}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
-            <span className="text-sm font-medium text-muted-foreground">
+            <span className="text-sm font-medium text-foreground">
               MindVista
             </span>
-            <Button variant="ghost" size="icon" onClick={handleClose}>
-              <X className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={toggleCalmMode}
+                className={calmMode ? 'text-primary' : ''}
+                aria-label={calmMode ? 'Disable calm mode' : 'Enable calm mode'}
+              >
+                <Leaf className="w-4 h-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={handleClose}>
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </header>
       )}
@@ -194,7 +240,10 @@ export default function Session() {
       {/* Main Content */}
       <main className={`${showNavigation ? 'pt-14' : ''}`}>
         {currentStep === 'welcome' && (
-          <WelcomeScreen onStart={handleStartSession} />
+          <WelcomeScreen 
+            onStart={handleStartSession} 
+            onStartGuided={handleStartGuided}
+          />
         )}
 
         {currentStep === 'emotion-check' && (
