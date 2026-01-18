@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -21,36 +22,86 @@ serve(async (req) => {
       );
     }
 
-    const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY");
-    if (!ELEVENLABS_API_KEY) {
-      throw new Error("ELEVENLABS_API_KEY is not configured");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const apiFormData = new FormData();
-    apiFormData.append("file", audioFile);
-    apiFormData.append("model_id", "scribe_v1");
-    apiFormData.append("language_code", "eng");
+    // Convert audio to base64
+    const audioBuffer = await audioFile.arrayBuffer();
+    const audioBase64 = base64Encode(audioBuffer);
 
-    const response = await fetch("https://api.elevenlabs.io/v1/speech-to-text", {
+    // Determine MIME type from file
+    const mimeType = audioFile.type || "audio/webm";
+
+    console.log(`Processing audio file: ${audioFile.name}, type: ${mimeType}, size: ${audioBuffer.byteLength} bytes`);
+
+    // Use Gemini's multimodal capabilities to transcribe audio
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
-        "xi-api-key": ELEVENLABS_API_KEY,
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
       },
-      body: apiFormData,
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          {
+            role: "system",
+            content: "You are a transcription assistant. Your task is to transcribe the audio accurately. Output ONLY the transcribed text, nothing else. Do not add any commentary, formatting, or explanation. If there is no speech or the audio is unclear, respond with an empty string."
+          },
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: "Please transcribe this audio recording exactly as spoken:"
+              },
+              {
+                type: "input_audio",
+                input_audio: {
+                  data: audioBase64,
+                  format: mimeType.includes("webm") ? "webm" : mimeType.includes("mp3") ? "mp3" : "wav"
+                }
+              }
+            ]
+          }
+        ],
+        temperature: 0.1,
+        max_tokens: 4096
+      }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("ElevenLabs API error:", response.status, errorText);
+      console.error("Lovable AI error:", response.status, errorText);
+      
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "AI credits exhausted. Please add credits to continue." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
       return new Response(
         JSON.stringify({ error: "Transcription failed", details: errorText }),
         { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const transcription = await response.json();
+    const data = await response.json();
+    const transcript = data.choices?.[0]?.message?.content?.trim() || "";
 
-    return new Response(JSON.stringify(transcription), {
+    console.log(`Transcription complete: ${transcript.length} characters`);
+
+    return new Response(JSON.stringify({ text: transcript }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
