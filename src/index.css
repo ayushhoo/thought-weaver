@@ -2,214 +2,223 @@
 @import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* MindVista Design System - Psychology-informed calming colors
+/* MindVista Design System - "Midnight Calm" Edition
+   Psychology-informed deep soothing theme
    Anxious thoughts: muted warm tones (peach/coral)
-   Neutral thoughts: desaturated blues/greys
+   Neutral thoughts: soft teals
    Reframed thoughts: soft greens
-   No pure black or high-contrast neon
+   No pure white or high-contrast elements - everything is soft
 */
 
 @layer base {
   :root {
-    /* Core palette - soft, therapeutic */
-    --background: 240 4% 95%;
-    --foreground: 240 5% 10%;
+    /* Midnight Core - Deep, soothing dark blues */
+    --background: 222 47% 11%;
+    --foreground: 210 40% 96%;
 
-    --card: 0 0% 98%;
-    --card-foreground: 240 5% 10%;
+    --card: 217 33% 17%;
+    --card-foreground: 210 40% 96%;
 
-    --popover: 240 5% 90%;
-    --popover-foreground: 240 5% 10%;
+    --popover: 222 47% 15%;
+    --popover-foreground: 210 40% 96%;
 
-    /* Primary - calming teal/sage */
-    --primary: 333 71% 50%;
-    --primary-foreground: 327 73% 97%;
+    /* Primary - Breathing Teal */
+    --primary: 174 62% 47%;
+    --primary-foreground: 222 47% 11%;
 
-    /* Secondary - soft lavender */
-    --secondary: 240 5% 33%;
-    --secondary-foreground: 0 0% 98%;
+    /* Secondary - Soft Lavender */
+    --secondary: 263 45% 55%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 240 4% 83%;
-    --muted-foreground: 240 5% 10%;
+    --muted: 217 19% 27%;
+    --muted-foreground: 215 20% 65%;
 
-    /* Accent - very soft sage */
-    --accent: 355 100% 97%;
-    --accent-foreground: 349 89% 60%;
+    /* Accent - Ethereal Lavender */
+    --accent: 270 40% 45%;
+    --accent-foreground: 270 60% 95%;
 
-    --destructive: 0 72% 50%;
-    --destructive-foreground: 0 85% 97%;
+    --destructive: 0 62% 55%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 240 4% 83%;
-    --input: 240 4% 83%;
-    --ring: 333 71% 50%;
+    --border: 215 20% 25%;
+    --input: 215 20% 25%;
+    --ring: 174 62% 47%;
 
     --radius: 1.5rem;
 
-    /* Thought node semantic colors */
-    --node-anxious: 25 70% 75%;
-    --node-anxious-foreground: 25 50% 25%;
-    --node-neutral: 215 25% 70%;
-    --node-neutral-foreground: 215 25% 20%;
-    --node-reframed: 145 40% 70%;
-    --node-reframed-foreground: 145 40% 20%;
-    --node-root: 168 45% 45%;
-    --node-root-foreground: 168 45% 98%;
-    --node-noise: 220 10% 80%;
-    --node-noise-foreground: 220 10% 50%;
+    /* Thought node semantic colors - Psychology-informed */
+    --node-anxious: 25 55% 60%;
+    --node-anxious-foreground: 25 30% 95%;
+    --node-neutral: 200 35% 55%;
+    --node-neutral-foreground: 200 20% 95%;
+    --node-reframed: 158 45% 50%;
+    --node-reframed-foreground: 158 40% 95%;
+    --node-root: 174 55% 40%;
+    --node-root-foreground: 174 50% 98%;
+    --node-noise: 220 15% 40%;
+    --node-noise-foreground: 220 15% 80%;
 
     /* Graph depth cues */
     --depth-primary: 1;
     --depth-secondary: 0.75;
     --depth-tertiary: 0.5;
 
-    /* Therapeutic gradients */
-    --calm-gradient: linear-gradient(135deg, hsl(210 25% 96%), hsl(168 30% 95%), hsl(260 20% 96%));
-    --breathe-gradient: linear-gradient(180deg, hsl(168 30% 95%), hsl(210 20% 98%));
+    /* Therapeutic gradients - Deep and immersive */
+    --calm-gradient: linear-gradient(135deg, hsl(222 47% 11%), hsl(217 33% 17%), hsl(222 47% 14%));
+    --breathe-gradient: linear-gradient(180deg, hsl(222 47% 9%), hsl(217 33% 14%));
+    --midnight-gradient: radial-gradient(ellipse at center, hsl(217 33% 17%), hsl(222 47% 8%));
+    
+    /* Glassmorphism overlays */
+    --glass-bg: hsl(217 33% 20% / 0.6);
+    --glass-border: hsl(174 62% 47% / 0.1);
 
-    /* Glow effects - subtle, not harsh */
-    --glow-primary: 0 8px 32px hsl(168 45% 45% / 0.15);
-    --glow-calm: 0 4px 24px hsl(260 25% 70% / 0.12);
-    --glow-success: 0 4px 24px hsl(145 40% 60% / 0.15);
+    /* Glow effects - Bioluminescent */
+    --glow-primary: 0 0 40px hsl(174 62% 47% / 0.25);
+    --glow-calm: 0 0 30px hsl(263 45% 55% / 0.2);
+    --glow-success: 0 0 30px hsl(158 45% 50% / 0.25);
+    --glow-breathing: 0 0 60px hsl(174 62% 47% / 0.35);
 
-    /* Shadows - soft and diffused */
-    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+    /* Shadows - Soft and ethereal */
+    --shadow-2xs: 0 1px 3px 0px hsl(222 47% 5% / 0.3);
+    --shadow-xs: 0 1px 5px 0px hsl(222 47% 5% / 0.4);
+    --shadow-sm: 0 2px 8px hsl(222 47% 5% / 0.4);
+    --shadow: 0 4px 16px hsl(222 47% 5% / 0.4);
+    --shadow-md: 0 8px 24px hsl(222 47% 5% / 0.5);
+    --shadow-lg: 0 12px 32px hsl(222 47% 5% / 0.5);
+    --shadow-xl: 0 16px 48px hsl(222 47% 5% / 0.6);
+    --shadow-2xl: 0 24px 64px hsl(222 47% 5% / 0.7);
 
     /* Typography */
     --font-sans: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
-    --font-serif: 'Merriweather', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+    --font-serif: 'Playfair Display', 'Merriweather', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+    --font-rounded: 'Nunito', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
     --line-height-relaxed: 1.7;
 
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-calm: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+    --transition-breathe: all 4s cubic-bezier(0.37, 0, 0.63, 1);
 
     /* Sidebar */
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 240 5% 10%;
-    --sidebar-primary: 333 71% 50%;
-    --sidebar-primary-foreground: 327 73% 97%;
-    --sidebar-accent: 240 5% 33%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 4% 83%;
-    --sidebar-ring: 333 71% 50%;
-    --sidebar: 0 0% 98%;
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 174 62% 47%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 263 45% 55%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 215 20% 25%;
+    --sidebar-ring: 174 62% 47%;
+    --sidebar: 217 33% 17%;
 
     /* Charts */
-    --chart-1: 328 85% 70%;
-    --chart-2: 351 94% 71%;
-    --chart-3: 327 87% 81%;
-    --chart-4: 352 95% 81%;
-    --chart-5: 240 3% 46%;
+    --chart-1: 174 62% 47%;
+    --chart-2: 263 45% 55%;
+    --chart-3: 158 45% 50%;
+    --chart-4: 25 55% 60%;
+    --chart-5: 200 35% 55%;
 
     --tracking-normal: 0em;
     --spacing: 0.25rem;
   }
 
-  .dark {
-    --background: 240 5% 10%;
-    --foreground: 0 0% 98%;
+  /* Light mode - kept for accessibility but with softer tones */
+  .light {
+    --background: 220 20% 96%;
+    --foreground: 222 47% 15%;
 
-    --card: 240 3% 15%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 99%;
+    --card-foreground: 222 47% 15%;
 
-    --popover: 240 5% 26%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 220 15% 94%;
+    --popover-foreground: 222 47% 15%;
 
-    --primary: 328 85% 70%;
-    --primary-foreground: 336 83% 17%;
+    --primary: 174 55% 38%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 240 3% 46%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 263 35% 75%;
+    --secondary-foreground: 263 40% 25%;
 
-    --muted: 240 3% 46%;
-    --muted-foreground: 0 0% 98%;
+    --muted: 220 15% 88%;
+    --muted-foreground: 220 10% 40%;
 
-    --accent: 343 87% 15%;
-    --accent-foreground: 351 94% 71%;
+    --accent: 270 35% 90%;
+    --accent-foreground: 270 50% 35%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 85% 97%;
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5% 33%;
-    --input: 240 5% 33%;
-    --ring: 328 85% 70%;
+    --border: 220 15% 80%;
+    --input: 220 15% 80%;
+    --ring: 174 55% 38%;
 
-    /* Dark mode thought nodes */
-    --node-anxious: 25 50% 55%;
-    --node-anxious-foreground: 25 30% 95%;
-    --node-neutral: 215 20% 50%;
-    --node-neutral-foreground: 215 15% 95%;
-    --node-reframed: 145 35% 50%;
-    --node-reframed-foreground: 145 30% 95%;
-    --node-root: 168 50% 55%;
-    --node-root-foreground: 168 50% 10%;
-    --node-noise: 220 10% 35%;
-    --node-noise-foreground: 220 10% 70%;
+    /* Light mode thought nodes */
+    --node-anxious: 25 60% 72%;
+    --node-anxious-foreground: 25 40% 20%;
+    --node-neutral: 200 30% 68%;
+    --node-neutral-foreground: 200 25% 20%;
+    --node-reframed: 158 40% 65%;
+    --node-reframed-foreground: 158 35% 18%;
+    --node-root: 174 50% 42%;
+    --node-root-foreground: 174 50% 98%;
+    --node-noise: 220 10% 75%;
+    --node-noise-foreground: 220 10% 35%;
 
-    --calm-gradient: linear-gradient(135deg, hsl(220 20% 12%), hsl(168 20% 14%), hsl(260 15% 14%));
-    --breathe-gradient: linear-gradient(180deg, hsl(168 20% 14%), hsl(220 20% 12%));
+    --calm-gradient: linear-gradient(135deg, hsl(220 20% 96%), hsl(200 25% 94%), hsl(270 20% 96%));
+    --breathe-gradient: linear-gradient(180deg, hsl(200 25% 94%), hsl(220 20% 97%));
+    --midnight-gradient: radial-gradient(ellipse at center, hsl(220 15% 98%), hsl(220 20% 94%));
 
-    --glow-primary: 0 8px 32px hsl(168 50% 55% / 0.2);
-    --glow-calm: 0 4px 24px hsl(260 20% 50% / 0.15);
-    --glow-success: 0 4px 24px hsl(145 35% 50% / 0.2);
+    --glow-primary: 0 8px 32px hsl(174 50% 42% / 0.15);
+    --glow-calm: 0 4px 24px hsl(263 35% 75% / 0.12);
+    --glow-success: 0 4px 24px hsl(158 40% 60% / 0.15);
 
-    --sidebar-background: 220 20% 10%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 328 85% 70%;
-    --sidebar-primary-foreground: 336 83% 17%;
-    --sidebar-accent: 351 94% 71%;
-    --sidebar-accent-foreground: 343 87% 15%;
-    --sidebar-border: 240 5% 33%;
-    --sidebar-ring: 328 85% 70%;
-    --sidebar: 240 3% 15%;
-
-    --chart-1: 327 87% 81%;
-    --chart-2: 352 95% 81%;
-    --chart-3: 328 85% 70%;
-    --chart-4: 351 94% 71%;
-    --chart-5: 240 5% 33%;
-
-    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 15%;
+    --sidebar-primary: 174 55% 38%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 263 35% 75%;
+    --sidebar-accent-foreground: 263 40% 25%;
+    --sidebar-border: 220 15% 80%;
+    --sidebar-ring: 174 55% 38%;
+    --sidebar: 0 0% 98%;
   }
 
-  /* Calm mode - reduced visual intensity */
+  /* Calm mode - even more reduced visual intensity */
   .calm-mode {
-    --primary: 168 35% 50%;
-    --node-anxious: 25 50% 80%;
-    --node-neutral: 215 20% 75%;
-    --glow-primary: 0 4px 16px hsl(168 35% 50% / 0.08);
-    --glow-calm: 0 2px 12px hsl(260 20% 70% / 0.06);
+    --primary: 174 45% 45%;
+    --node-anxious: 25 40% 65%;
+    --node-neutral: 200 25% 60%;
+    --glow-primary: 0 0 20px hsl(174 45% 45% / 0.15);
+    --glow-calm: 0 0 15px hsl(263 35% 50% / 0.1);
+    --glow-breathing: 0 0 40px hsl(174 45% 45% / 0.2);
   }
 
-  /* High contrast mode */
+  /* High contrast mode - for accessibility */
   .high-contrast {
-    --foreground: 220 20% 15%;
-    --muted-foreground: 220 15% 30%;
-    --border: 220 15% 70%;
+    --foreground: 210 50% 98%;
+    --muted-foreground: 210 30% 80%;
+    --border: 215 25% 35%;
   }
 
-  .dark.high-contrast {
-    --foreground: 210 15% 98%;
-    --muted-foreground: 210 10% 80%;
-    --border: 220 15% 40%;
+  /* Persona themes */
+  .persona-stoic {
+    --font-primary: 'Playfair Display', serif;
+    font-family: var(--font-serif);
+  }
+
+  .persona-grandma {
+    --font-primary: 'Nunito', sans-serif;
+    font-family: var(--font-rounded);
+  }
+
+  .persona-detective {
+    --font-primary: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
   }
 }
 
@@ -221,6 +230,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     line-height: var(--line-height-relaxed);
+    background: var(--calm-gradient);
   }
 
   /* Reduced motion preference */
@@ -264,6 +274,114 @@
     filter: blur(1px);
   }
 
+  /* Glassmorphism utilities */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+  }
+
+  .glass-strong {
+    background: hsl(217 33% 20% / 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(174 62% 47% / 0.15);
+  }
+
+  /* Breathing animation for recording */
+  .breathing-container {
+    animation: breathe-scale 8s ease-in-out infinite;
+  }
+
+  @keyframes breathe-scale {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 20px hsl(174 62% 47% / 0.2);
+    }
+    50% {
+      transform: scale(1.15);
+      box-shadow: 0 0 60px hsl(174 62% 47% / 0.4);
+    }
+  }
+
+  /* Breathing ring animation (4 second inhale, 4 second exhale) */
+  .breathing-ring {
+    animation: breathing-ring-expand 8s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  }
+
+  .breathing-ring-delayed-1 {
+    animation: breathing-ring-expand 8s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+    animation-delay: 0.5s;
+  }
+
+  .breathing-ring-delayed-2 {
+    animation: breathing-ring-expand 8s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+    animation-delay: 1s;
+  }
+
+  @keyframes breathing-ring-expand {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    50% {
+      transform: scale(1.35);
+      opacity: 0.1;
+    }
+  }
+
+  /* Breathing guide text */
+  .breathing-guide::after {
+    content: 'Breathe in...';
+    animation: breathing-text 8s ease-in-out infinite;
+  }
+
+  @keyframes breathing-text {
+    0%, 45% {
+      content: 'Breathe in...';
+    }
+    50%, 95% {
+      content: 'Breathe out...';
+    }
+  }
+
+  /* Brownian motion for floating nodes */
+  .brownian-float {
+    animation: brownian-motion 12s ease-in-out infinite;
+  }
+
+  @keyframes brownian-motion {
+    0%, 100% {
+      transform: translate(0, 0);
+    }
+    10% {
+      transform: translate(2px, -3px);
+    }
+    20% {
+      transform: translate(-1px, 2px);
+    }
+    30% {
+      transform: translate(3px, 1px);
+    }
+    40% {
+      transform: translate(-2px, -2px);
+    }
+    50% {
+      transform: translate(1px, 3px);
+    }
+    60% {
+      transform: translate(-3px, -1px);
+    }
+    70% {
+      transform: translate(2px, 2px);
+    }
+    80% {
+      transform: translate(-1px, -3px);
+    }
+    90% {
+      transform: translate(3px, -2px);
+    }
+  }
+
   /* Micro-interaction feedback */
   .micro-bounce {
     animation: micro-bounce 0.3s ease-out;
@@ -292,5 +410,84 @@
   @keyframes micro-fade-success {
     0% { opacity: 1; background-color: hsl(var(--node-reframed)); }
     100% { opacity: 1; }
+  }
+
+  /* Infinite graph background */
+  .infinite-graph-bg {
+    background: var(--midnight-gradient);
+    position: relative;
+    overflow: visible;
+  }
+
+  .infinite-graph-bg::before {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    background: 
+      radial-gradient(circle at 20% 30%, hsl(174 62% 47% / 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, hsl(263 45% 55% / 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, hsl(158 45% 50% / 0.03) 0%, transparent 60%);
+    animation: ambient-float 20s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes ambient-float {
+    0%, 100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    33% {
+      transform: translate(10px, -10px) rotate(1deg);
+    }
+    66% {
+      transform: translate(-10px, 10px) rotate(-1deg);
+    }
+  }
+
+  /* Silk-like connection lines */
+  .silk-connection {
+    stroke: url(#silk-gradient);
+    stroke-width: 1.5;
+    opacity: 0.6;
+    filter: blur(0.5px);
+  }
+
+  /* Persona-specific background textures */
+  .texture-marble {
+    background-image: 
+      linear-gradient(135deg, hsl(0 0% 95% / 0.02) 0%, transparent 50%),
+      linear-gradient(225deg, hsl(0 0% 90% / 0.03) 0%, transparent 50%);
+    background-size: 200px 200px;
+  }
+
+  .texture-warm {
+    background: 
+      radial-gradient(ellipse at 30% 20%, hsl(35 60% 50% / 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, hsl(25 50% 45% / 0.06) 0%, transparent 50%),
+      var(--calm-gradient);
+  }
+
+  .texture-dark-slate {
+    background:
+      linear-gradient(180deg, hsl(220 30% 8%) 0%, hsl(220 25% 12%) 100%);
+  }
+
+  /* Luminous node glow */
+  .node-glow {
+    box-shadow: var(--glow-primary);
+    transition: box-shadow 0.5s ease;
+  }
+
+  .node-glow:hover {
+    box-shadow: 0 0 50px hsl(174 62% 47% / 0.4);
+  }
+
+  /* Ethereal card style */
+  .ethereal-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid hsl(174 62% 47% / 0.1);
+    box-shadow: 
+      0 8px 32px hsl(222 47% 5% / 0.3),
+      inset 0 1px 0 hsl(210 40% 96% / 0.05);
   }
 }

@@ -1,8 +1,8 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { GraphControls } from '@/components/GraphControls';
 import { ThoughtReframeDialog } from '@/components/ThoughtReframeDialog';
-import { Sparkles, Archive, Layers } from 'lucide-react';
+import { Sparkles, Archive } from 'lucide-react';
 import type { WorryGraph, WorryNode } from '@/types/session';
 import { useAccessibility } from '@/hooks/useAccessibility';
 
@@ -10,6 +10,59 @@ interface WorryGraphViewProps {
   graph: WorryGraph;
   onContinue: () => void;
   onGraphUpdate?: (graph: WorryGraph) => void;
+}
+
+// Brownian motion offset generator
+function useBrownianMotion(isPaused: boolean, nodeId: string) {
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const frameRef = useRef<number>();
+  const velocityRef = useRef({ x: 0, y: 0 });
+  
+  useEffect(() => {
+    if (isPaused) {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+      return;
+    }
+
+    const maxOffset = 8; // Maximum pixels from origin
+    const damping = 0.98;
+    const randomForce = 0.15;
+
+    const animate = () => {
+      // Add random force (Brownian motion)
+      velocityRef.current.x += (Math.random() - 0.5) * randomForce;
+      velocityRef.current.y += (Math.random() - 0.5) * randomForce;
+      
+      // Apply damping
+      velocityRef.current.x *= damping;
+      velocityRef.current.y *= damping;
+      
+      // Calculate new position
+      let newX = offset.x + velocityRef.current.x;
+      let newY = offset.y + velocityRef.current.y;
+      
+      // Soft boundary - spring back towards center
+      const distance = Math.sqrt(newX * newX + newY * newY);
+      if (distance > maxOffset) {
+        const factor = maxOffset / distance;
+        newX *= factor;
+        newY *= factor;
+        velocityRef.current.x *= 0.5;
+        velocityRef.current.y *= 0.5;
+      }
+      
+      setOffset({ x: newX, y: newY });
+      frameRef.current = requestAnimationFrame(animate);
+    };
+
+    frameRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    };
+  }, [isPaused, nodeId]);
+
+  return offset;
 }
 
 function WorryNodeComponent({ 
@@ -27,37 +80,37 @@ function WorryNodeComponent({
   isReframed?: boolean;
   depth?: 'primary' | 'secondary' | 'tertiary';
 }) {
-  const baseDelay = useMemo(() => Math.random() * 2, []);
+  const brownianOffset = useBrownianMotion(isPaused, node.id);
+  const baseDelay = useMemo(() => Math.random() * 3, []);
   
   const sizeClasses = node.isRoot 
-    ? 'w-32 h-32 md:w-40 md:h-40' 
+    ? 'w-36 h-36 md:w-44 md:h-44' 
     : node.isNoise 
-      ? 'w-14 h-14 md:w-18 md:h-18'
-      : 'w-20 h-20 md:w-28 md:h-28';
+      ? 'w-16 h-16 md:w-20 md:h-20'
+      : 'w-24 h-24 md:w-32 md:h-32';
 
   const colorClasses = isReframed
     ? 'bg-node-reframed text-node-reframed-foreground shadow-glow-success'
     : node.isRoot 
-      ? 'bg-node-root text-node-root-foreground shadow-glow' 
+      ? 'bg-node-root text-node-root-foreground shadow-glow node-glow' 
       : node.isNoise 
-        ? 'bg-node-noise text-node-noise-foreground'
-        : 'bg-card text-card-foreground border border-border';
+        ? 'bg-node-noise/80 text-node-noise-foreground'
+        : 'bg-card/80 text-card-foreground border border-border/50 glass';
 
   const depthClasses = node.isNoise ? 'depth-tertiary' : depth === 'secondary' ? 'depth-secondary' : '';
   
   return (
     <button
       className={`
-        absolute cursor-pointer transition-all duration-300 transform focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+        absolute cursor-pointer transition-all duration-500 transform focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
         ${node.isRoot ? 'z-20' : node.isNoise ? 'z-5' : 'z-10'}
         ${isSelected ? 'scale-110' : 'hover:scale-105'}
-        ${!isPaused ? 'animate-node-float' : ''}
         ${isReframed ? 'animate-reframe-glow' : ''}
         ${depthClasses}
       `}
       style={{ 
-        left: `${node.x}%`, 
-        top: `${node.y}%`,
+        left: `calc(${node.x}% + ${brownianOffset.x}px)`, 
+        top: `calc(${node.y}% + ${brownianOffset.y}px)`,
         animationDelay: `${baseDelay}s`,
       }}
       onClick={onClick}
@@ -65,7 +118,7 @@ function WorryNodeComponent({
     >
       <div
         className={`
-          rounded-full flex items-center justify-center p-3 transition-all duration-300
+          rounded-full flex items-center justify-center p-4 transition-all duration-500 backdrop-blur-sm
           ${sizeClasses}
           ${colorClasses}
           ${isSelected ? 'ring-4 ring-primary ring-offset-2 ring-offset-background' : ''}
@@ -74,10 +127,40 @@ function WorryNodeComponent({
         <span className={`text-center leading-tight ${
           node.isRoot ? 'text-xs md:text-sm font-semibold' : 'text-xs'
         }`}>
-          {node.text.length > 25 ? node.text.slice(0, 25) + '...' : node.text}
+          {node.text.length > 30 ? node.text.slice(0, 30) + '...' : node.text}
         </span>
       </div>
     </button>
+  );
+}
+
+// Silk-like connection line component
+function SilkConnection({ 
+  source, 
+  target, 
+  isPaused 
+}: { 
+  source: WorryNode; 
+  target: WorryNode;
+  isPaused: boolean;
+}) {
+  const sourceOffset = useBrownianMotion(isPaused, `${source.id}-line`);
+  const targetOffset = useBrownianMotion(isPaused, `${target.id}-line`);
+
+  return (
+    <line
+      x1={`calc(${source.x + 5}% + ${sourceOffset.x}px)`}
+      y1={`calc(${source.y + 5}% + ${sourceOffset.y}px)`}
+      x2={`calc(${target.x + 5}% + ${targetOffset.x}px)`}
+      y2={`calc(${target.y + 5}% + ${targetOffset.y}px)`}
+      stroke="url(#silk-gradient)"
+      strokeWidth="2"
+      strokeLinecap="round"
+      className="opacity-40"
+      style={{
+        filter: 'blur(0.5px)',
+      }}
+    />
   );
 }
 
@@ -99,6 +182,14 @@ export function WorryGraphView({ graph, onContinue, onGraphUpdate }: WorryGraphV
       return true;
     });
   }, [graph.nodes, showNoise, archivedNodes]);
+
+  const visibleEdges = useMemo(() => {
+    return graph.edges.filter(edge => {
+      const sourceVisible = visibleNodes.some(n => n.id === edge.source);
+      const targetVisible = visibleNodes.some(n => n.id === edge.target);
+      return sourceVisible && targetVisible;
+    });
+  }, [graph.edges, visibleNodes]);
 
   const handleNodeClick = useCallback((node: WorryNode) => {
     setSelectedNode(prev => prev?.id === node.id ? null : node);
@@ -132,18 +223,17 @@ export function WorryGraphView({ graph, onContinue, onGraphUpdate }: WorryGraphV
     setHistory([]);
   }, []);
 
-  const rootNode = graph.nodes.find(n => n.isRoot);
   const reframedCount = reframedNodes.size;
   const archivedCount = archivedNodes.size;
 
   return (
-    <div className="flex flex-col items-center gap-6 animate-fade-in w-full max-w-4xl">
+    <div className="flex flex-col items-center gap-6 animate-fade-in w-full max-w-5xl">
       <div className="text-center space-y-2">
         <h2 className="text-2xl md:text-3xl font-semibold text-foreground">
           Your Worry Graph
         </h2>
         <p className="text-muted-foreground max-w-md leading-relaxed">
-          Click any thought to explore it. The <span className="text-primary font-medium">highlighted node</span> is your root concern.
+          Your thoughts float gently. Click any to explore. The <span className="text-primary font-medium">glowing node</span> is your root concern.
         </p>
       </div>
 
@@ -164,13 +254,13 @@ export function WorryGraphView({ graph, onContinue, onGraphUpdate }: WorryGraphV
       {(reframedCount > 0 || archivedCount > 0) && (
         <div className="flex gap-4 text-sm animate-fade-in">
           {reframedCount > 0 && (
-            <span className="flex items-center gap-1.5 text-node-reframed-foreground bg-node-reframed/20 px-3 py-1 rounded-full">
+            <span className="flex items-center gap-1.5 text-node-reframed-foreground bg-node-reframed/20 px-3 py-1.5 rounded-full glass">
               <Sparkles className="h-3.5 w-3.5" />
               {reframedCount} reframed
             </span>
           )}
           {archivedCount > 0 && (
-            <span className="flex items-center gap-1.5 text-muted-foreground bg-muted px-3 py-1 rounded-full">
+            <span className="flex items-center gap-1.5 text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full glass">
               <Archive className="h-3.5 w-3.5" />
               {archivedCount} archived
             </span>
@@ -178,37 +268,53 @@ export function WorryGraphView({ graph, onContinue, onGraphUpdate }: WorryGraphV
         </div>
       )}
 
-      {/* Graph Container */}
+      {/* Graph Container - Infinite feel, no borders */}
       <div 
-        className="relative w-full h-[400px] md:h-[500px] bg-card/50 rounded-2xl border border-border overflow-hidden"
-        style={{ background: 'var(--breathe-gradient)' }}
+        className="relative w-full h-[450px] md:h-[550px] infinite-graph-bg rounded-3xl overflow-visible"
         role="img"
         aria-label="Interactive worry graph visualization"
       >
-        {/* Connection lines */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none">
-          {graph.edges.map((edge, i) => {
+        {/* SVG Gradient definitions */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: 'visible' }}>
+          <defs>
+            <linearGradient id="silk-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="hsl(174 62% 47%)" stopOpacity="0.3" />
+              <stop offset="50%" stopColor="hsl(263 45% 55%)" stopOpacity="0.2" />
+              <stop offset="100%" stopColor="hsl(174 62% 47%)" stopOpacity="0.3" />
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          
+          {/* Connection lines with silk effect */}
+          {visibleEdges.map((edge, i) => {
             const source = visibleNodes.find(n => n.id === edge.source);
             const target = visibleNodes.find(n => n.id === edge.target);
             if (!source || !target) return null;
             
             return (
-              <line
-                key={i}
-                x1={`${source.x + 5}%`}
-                y1={`${source.y + 5}%`}
-                x2={`${target.x + 5}%`}
-                y2={`${target.y + 5}%`}
-                stroke="hsl(var(--border))"
-                strokeWidth="2"
-                strokeDasharray="6,4"
-                className="opacity-50"
-              />
+              <g key={i} filter="url(#glow)">
+                <line
+                  x1={`${source.x + 5}%`}
+                  y1={`${source.y + 5}%`}
+                  x2={`${target.x + 5}%`}
+                  y2={`${target.y + 5}%`}
+                  stroke="url(#silk-gradient)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  className="opacity-30"
+                />
+              </g>
             );
           })}
         </svg>
 
-        {/* Nodes */}
+        {/* Nodes with Brownian motion */}
         {visibleNodes.map(node => (
           <WorryNodeComponent
             key={node.id}
@@ -221,13 +327,13 @@ export function WorryGraphView({ graph, onContinue, onGraphUpdate }: WorryGraphV
         ))}
       </div>
 
-      {/* Selected Node Detail */}
+      {/* Selected Node Detail - Glassmorphism */}
       {selectedNode && (
-        <div className="bg-card rounded-xl p-5 max-w-md w-full border border-border animate-slide-up shadow-md">
+        <div className="ethereal-card rounded-2xl p-6 max-w-md w-full animate-slide-up">
           <div className="flex items-start gap-3">
             <div className={`w-3 h-3 rounded-full mt-1.5 flex-shrink-0 ${
               reframedNodes.has(selectedNode.id) ? 'bg-node-reframed' :
-              selectedNode.isRoot ? 'bg-node-root' : 
+              selectedNode.isRoot ? 'bg-node-root shadow-glow' : 
               selectedNode.isNoise ? 'bg-node-noise' : 'bg-node-neutral'
             }`} />
             <div className="flex-1 space-y-3">
@@ -262,6 +368,7 @@ export function WorryGraphView({ graph, onContinue, onGraphUpdate }: WorryGraphV
                     size="sm" 
                     variant="outline"
                     onClick={() => handleArchive(selectedNode.id)}
+                    className="glass"
                   >
                     <Archive className="h-3.5 w-3.5 mr-1.5" />
                     Archive
@@ -273,27 +380,27 @@ export function WorryGraphView({ graph, onContinue, onGraphUpdate }: WorryGraphV
         </div>
       )}
 
-      {/* Legend */}
-      <div className="flex flex-wrap justify-center gap-4 text-sm" role="list" aria-label="Graph legend">
+      {/* Legend - Subtle */}
+      <div className="flex flex-wrap justify-center gap-4 text-sm opacity-70" role="list" aria-label="Graph legend">
         <div className="flex items-center gap-2" role="listitem">
-          <div className="w-4 h-4 rounded-full bg-node-root" />
+          <div className="w-4 h-4 rounded-full bg-node-root shadow-glow" />
           <span className="text-muted-foreground">Root Concern</span>
         </div>
         <div className="flex items-center gap-2" role="listitem">
-          <div className="w-4 h-4 rounded-full bg-card border border-border" />
+          <div className="w-4 h-4 rounded-full bg-card/80 border border-border/50" />
           <span className="text-muted-foreground">Connected</span>
         </div>
         <div className="flex items-center gap-2" role="listitem">
-          <div className="w-4 h-4 rounded-full bg-node-reframed" />
+          <div className="w-4 h-4 rounded-full bg-node-reframed shadow-glow-success" />
           <span className="text-muted-foreground">Reframed</span>
         </div>
         <div className="flex items-center gap-2" role="listitem">
-          <div className="w-4 h-4 rounded-full bg-node-noise opacity-60" />
+          <div className="w-4 h-4 rounded-full bg-node-noise/60" />
           <span className="text-muted-foreground">Noise</span>
         </div>
       </div>
 
-      <Button variant="hero" size="xl" onClick={onContinue}>
+      <Button variant="hero" size="xl" onClick={onContinue} className="mt-4">
         Get a Fresh Perspective
       </Button>
 
