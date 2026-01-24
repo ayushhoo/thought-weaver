@@ -12,6 +12,7 @@ import { PersonaSelector } from '@/components/PersonaSelector';
 import { ReframeView } from '@/components/ReframeView';
 import { ReflectionView } from '@/components/ReflectionView';
 import { Button } from '@/components/ui/button';
+import { AmbientOrbs } from '@/components/AmbientOrbs';
 import { ArrowLeft, X, Leaf } from 'lucide-react';
 import { toast } from 'sonner';
 import type { EmotionLevel, Persona, WorryGraph, APIWorryGraph } from '@/types/session';
@@ -207,7 +208,9 @@ export default function Session() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      {/* Ambient floating orbs background */}
+      <AmbientOrbs />
       {/* Navigation Header */}
       {showNavigation && (
         <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-sm border-b border-border">
