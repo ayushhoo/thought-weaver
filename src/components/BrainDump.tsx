@@ -12,18 +12,37 @@ export function BrainDump({ onComplete }: BrainDumpProps) {
   const [timeLeft, setTimeLeft] = useState(120);
   const [hasRecorded, setHasRecorded] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
+  const [breathPhase, setBreathPhase] = useState<'in' | 'out'>('in');
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const breathIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const stopRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
     }
+    if (breathIntervalRef.current) {
+      clearInterval(breathIntervalRef.current);
+    }
   }, []);
+
+  // Breathing phase toggle (4 seconds each)
+  useEffect(() => {
+    if (isRecording) {
+      breathIntervalRef.current = setInterval(() => {
+        setBreathPhase(prev => prev === 'in' ? 'out' : 'in');
+      }, 4000);
+    }
+    return () => {
+      if (breathIntervalRef.current) {
+        clearInterval(breathIntervalRef.current);
+      }
+    };
+  }, [isRecording]);
 
   useEffect(() => {
     if (isRecording && timeLeft > 0) {
@@ -107,6 +126,7 @@ export function BrainDump({ onComplete }: BrainDumpProps) {
 
       mediaRecorder.start();
       setIsRecording(true);
+      setBreathPhase('in');
     } catch (err) {
       console.error('Error accessing microphone:', err);
       toast.error('Could not access microphone. Please check permissions.');
@@ -126,27 +146,46 @@ export function BrainDump({ onComplete }: BrainDumpProps) {
           Brain Dump
         </h2>
         <p className="text-muted-foreground max-w-md">
-          Speak freely about what's on your mind. No judgment, no interruptions. 
-          Just let it all out.
+          Speak freely about what's on your mind. Let the breathing guide calm you 
+          as you release your thoughts.
         </p>
       </div>
 
-      {/* Recording Visualization */}
-      <div className="relative w-48 h-48 flex items-center justify-center">
-        {/* Outer glow rings */}
+      {/* Breathing Recording Visualization */}
+      <div className="relative w-64 h-64 flex items-center justify-center">
+        {/* Outer breathing rings - 4-4 technique */}
         {isRecording && (
           <>
-            <div className="absolute inset-0 rounded-full bg-primary/10 animate-breathe" />
-            <div className="absolute inset-4 rounded-full bg-primary/20 animate-breathe" style={{ animationDelay: '0.5s' }} />
-            <div className="absolute inset-8 rounded-full bg-primary/30 animate-breathe" style={{ animationDelay: '1s' }} />
+            {/* Outermost ring */}
+            <div 
+              className="absolute inset-0 rounded-full border-2 border-primary/20 animate-breathe-ring"
+              style={{ animationDelay: '0s' }}
+            />
+            {/* Middle ring */}
+            <div 
+              className="absolute inset-4 rounded-full border-2 border-primary/30 animate-breathe-ring"
+              style={{ animationDelay: '0.5s' }}
+            />
+            {/* Inner ring */}
+            <div 
+              className="absolute inset-8 rounded-full border-2 border-primary/40 animate-breathe-ring"
+              style={{ animationDelay: '1s' }}
+            />
+            {/* Glow field */}
+            <div 
+              className="absolute inset-12 rounded-full bg-primary/10 animate-breathe-4-4"
+            />
           </>
         )}
         
-        {/* Main button */}
+        {/* Main button with breathing animation */}
         <Button
           variant={isRecording ? 'recording' : 'hero'}
           size="iconLg"
-          className="w-24 h-24 rounded-full relative z-10"
+          className={`
+            w-28 h-28 rounded-full relative z-10 transition-all duration-700
+            ${isRecording ? 'animate-breathe-4-4 shadow-glow-breathing' : 'shadow-glow hover:shadow-xl'}
+          `}
           onClick={isRecording ? stopRecording : startRecording}
           disabled={isTranscribing || hasRecorded}
         >
@@ -156,18 +195,32 @@ export function BrainDump({ onComplete }: BrainDumpProps) {
             <Mic className="w-8 h-8" />
           )}
         </Button>
+
+        {/* Breathing guide text */}
+        {isRecording && (
+          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap">
+            <span className={`
+              text-sm font-medium transition-opacity duration-1000
+              ${breathPhase === 'in' ? 'text-primary' : 'text-secondary'}
+            `}>
+              {breathPhase === 'in' ? 'Breathe in...' : 'Breathe out...'}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Timer */}
       <div className="text-center">
-        <p className={`text-4xl font-mono font-bold ${isRecording ? 'text-primary' : 'text-muted-foreground'}`}>
+        <p className={`text-4xl font-mono font-bold transition-colors duration-500 ${
+          isRecording ? 'text-primary' : 'text-muted-foreground'
+        }`}>
           {formatTime(timeLeft)}
         </p>
         <p className="text-sm text-muted-foreground mt-2">
           {isTranscribing 
             ? 'Transcribing your thoughts...' 
             : isRecording 
-              ? 'Recording... speak freely' 
+              ? 'Recording... follow the breath' 
               : hasRecorded 
                 ? 'Processing...' 
                 : 'Tap to start'}
@@ -176,17 +229,18 @@ export function BrainDump({ onComplete }: BrainDumpProps) {
 
       {/* Instructions */}
       {!isRecording && !hasRecorded && !isTranscribing && (
-        <div className="bg-card rounded-lg p-4 max-w-sm text-center border border-border">
+        <div className="glass rounded-2xl p-5 max-w-sm text-center">
           <p className="text-sm text-muted-foreground">
-            <strong className="text-foreground">Tips:</strong> Speak about what's worrying you, 
-            what you're overthinking, or anything weighing on your mind.
+            <strong className="text-foreground">Tips:</strong> The breathing animation 
+            will guide you with a calming 4-second inhale, 4-second exhale rhythm. 
+            Speak about what's worrying you.
           </p>
         </div>
       )}
 
       {/* Loading indicator */}
       {isTranscribing && (
-        <div className="flex items-center gap-2 text-muted-foreground">
+        <div className="flex items-center gap-3 text-muted-foreground">
           <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
           <div className="w-2 h-2 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
           <div className="w-2 h-2 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
