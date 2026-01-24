@@ -113,7 +113,6 @@ export default {
   					transform: 'scale(1.02)'
   				}
   			},
-  			// 4-4 Breathing animation (4s inhale, 4s exhale)
   			'breathe-4-4': {
   				'0%, 100%': {
   					transform: 'scale(1)',
@@ -186,7 +185,6 @@ export default {
   					opacity: '0'
   				}
   			},
-  			// Enhanced Brownian motion for organic floating
   			'brownian-float': {
   				'0%, 100%': {
   					transform: 'translate(0, 0) rotate(0deg)'
@@ -274,7 +272,6 @@ export default {
   					transform: 'translateY(0)'
   				}
   			},
-  			// Ambient glow pulse for ethereal effect
   			'ambient-glow': {
   				'0%, 100%': {
   					opacity: '0.3'
@@ -283,7 +280,6 @@ export default {
   					opacity: '0.6'
   				}
   			},
-  			// Connection line shimmer
   			'silk-shimmer': {
   				'0%': {
   					strokeDashoffset: '0'
@@ -298,7 +294,6 @@ export default {
   			'accordion-up': 'accordion-up 0.2s ease-out',
   			float: 'float 4s ease-in-out infinite',
   			'pulse-soft': 'pulse-soft 3s ease-in-out infinite',
-  			// 4-4 breathing: 8 second total cycle
   			'breathe-4-4': 'breathe-4-4 8s cubic-bezier(0.37, 0, 0.63, 1) infinite',
   			'breathe-ring': 'breathe-ring 8s cubic-bezier(0.37, 0, 0.63, 1) infinite',
   			breathe: 'breathe 5s ease-in-out infinite',
@@ -306,7 +301,6 @@ export default {
   			'fade-out': 'fade-out 0.3s ease-out',
   			'scale-in': 'scale-in 0.3s ease-out',
   			ripple: 'ripple 0.8s ease-out forwards',
-  			// Brownian motion - longer, organic movement
   			'brownian-float': 'brownian-float 15s ease-in-out infinite',
   			'node-float': 'node-float 8s ease-in-out infinite',
   			'node-settle': 'node-settle 0.4s ease-out',
@@ -345,7 +339,6 @@ export default {
   				'sans-serif'
   			],
   			serif: [
-  				'Playfair Display',
   				'Merriweather',
   				'ui-serif',
   				'Georgia',
