@@ -19,36 +19,36 @@
 @layer base {
   :root {
     /* Serene Light Core - Soft, calming light tones */
-    --background: 210 40% 98%;
-    --foreground: 222 47% 20%;
+    --background: 240 4% 95%;
+    --foreground: 240 5% 10%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 20%;
+    --card: 0 0% 98%;
+    --card-foreground: 240 5% 10%;
 
-    --popover: 210 35% 97%;
-    --popover-foreground: 222 47% 20%;
+    --popover: 240 5% 90%;
+    --popover-foreground: 240 5% 10%;
 
     /* Primary - Calming Teal */
-    --primary: 174 55% 40%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 333 71% 50%;
+    --primary-foreground: 327 73% 97%;
 
     /* Secondary - Soft Lavender */
-    --secondary: 263 35% 88%;
-    --secondary-foreground: 263 40% 30%;
+    --secondary: 240 5% 33%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 210 30% 92%;
-    --muted-foreground: 220 15% 45%;
+    --muted: 240 4% 83%;
+    --muted-foreground: 240 5% 10%;
 
     /* Accent - Gentle Lavender */
-    --accent: 270 40% 94%;
-    --accent-foreground: 270 45% 35%;
+    --accent: 355 100% 97%;
+    --accent-foreground: 349 89% 60%;
 
-    --destructive: 0 65% 55%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 85% 97%;
 
-    --border: 220 20% 88%;
-    --input: 220 20% 90%;
-    --ring: 174 55% 40%;
+    --border: 240 4% 83%;
+    --input: 240 4% 83%;
+    --ring: 333 71% 50%;
 
     --radius: 1.5rem;
 
@@ -85,14 +85,14 @@
     --glow-breathing: 0 12px 40px hsl(174 55% 40% / 0.2);
 
     /* Shadows - Soft and elegant */
-    --shadow-2xs: 0 1px 2px 0px hsl(220 20% 40% / 0.04);
-    --shadow-xs: 0 1px 3px 0px hsl(220 20% 40% / 0.06);
-    --shadow-sm: 0 2px 4px 0px hsl(220 20% 40% / 0.08), 0 1px 2px -1px hsl(220 20% 40% / 0.06);
-    --shadow: 0 4px 8px 0px hsl(220 20% 40% / 0.08), 0 2px 4px -1px hsl(220 20% 40% / 0.06);
-    --shadow-md: 0 6px 12px 0px hsl(220 20% 40% / 0.1), 0 4px 6px -2px hsl(220 20% 40% / 0.08);
-    --shadow-lg: 0 10px 20px 0px hsl(220 20% 40% / 0.1), 0 6px 10px -3px hsl(220 20% 40% / 0.08);
-    --shadow-xl: 0 16px 32px 0px hsl(220 20% 40% / 0.12), 0 8px 16px -4px hsl(220 20% 40% / 0.1);
-    --shadow-2xl: 0 24px 48px 0px hsl(220 20% 40% / 0.15);
+    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
+    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 
     /* Typography */
     --font-sans: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
@@ -107,21 +107,21 @@
 
     /* Sidebar */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 20%;
-    --sidebar-primary: 174 55% 40%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 263 35% 88%;
-    --sidebar-accent-foreground: 263 40% 30%;
-    --sidebar-border: 220 20% 88%;
-    --sidebar-ring: 174 55% 40%;
-    --sidebar: 0 0% 100%;
+    --sidebar-foreground: 240 5% 10%;
+    --sidebar-primary: 333 71% 50%;
+    --sidebar-primary-foreground: 327 73% 97%;
+    --sidebar-accent: 240 5% 33%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 4% 83%;
+    --sidebar-ring: 333 71% 50%;
+    --sidebar: 0 0% 98%;
 
     /* Charts */
-    --chart-1: 174 55% 45%;
-    --chart-2: 263 40% 65%;
-    --chart-3: 158 45% 55%;
-    --chart-4: 25 55% 65%;
-    --chart-5: 200 35% 60%;
+    --chart-1: 328 85% 70%;
+    --chart-2: 351 94% 71%;
+    --chart-3: 327 87% 81%;
+    --chart-4: 352 95% 81%;
+    --chart-5: 240 3% 46%;
 
     --tracking-normal: 0em;
     --spacing: 0.25rem;
