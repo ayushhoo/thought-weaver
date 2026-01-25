@@ -20,15 +20,15 @@ export function AmbientOrbs() {
       y: Math.random() * 100,
       duration: Math.random() * 20 + 15,
       delay: Math.random() * -20,
-      opacity: Math.random() * 0.15 + 0.05,
+      opacity: Math.random() * 0.12 + 0.04,
       color: (['teal', 'lavender', 'peach'] as const)[i % 3],
     }));
   }, []);
 
   const colorClasses = {
-    teal: 'bg-primary/30',
-    lavender: 'bg-accent/30',
-    peach: 'bg-[hsl(20,80%,70%)]/20',
+    teal: 'bg-primary/20',
+    lavender: 'bg-secondary/25',
+    peach: 'bg-[hsl(25,60%,75%)]/15',
   };
 
   return (
