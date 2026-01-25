@@ -8,91 +8,91 @@
 @tailwind components;
 @tailwind utilities;
 
-/* MindVista Design System - "Midnight Calm" Edition
-   Psychology-informed deep soothing theme
+/* MindVista Design System - "Serene Light" Edition
+   Psychology-informed calming light theme
    Anxious thoughts: muted warm tones (peach/coral)
    Neutral thoughts: soft teals
    Reframed thoughts: soft greens
-   No pure white or high-contrast elements - everything is soft
+   Soft, airy design that feels safe and inviting
 */
 
 @layer base {
   :root {
-    /* Midnight Core - Deep, soothing dark blues */
-    --background: 240 4% 95%;
-    --foreground: 240 5% 10%;
+    /* Serene Light Core - Soft, calming light tones */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 20%;
 
-    --card: 0 0% 98%;
-    --card-foreground: 240 5% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 20%;
 
-    --popover: 240 5% 90%;
-    --popover-foreground: 240 5% 10%;
+    --popover: 210 35% 97%;
+    --popover-foreground: 222 47% 20%;
 
-    /* Primary - Breathing Teal */
-    --primary: 333 71% 50%;
-    --primary-foreground: 327 73% 97%;
+    /* Primary - Calming Teal */
+    --primary: 174 55% 40%;
+    --primary-foreground: 0 0% 100%;
 
     /* Secondary - Soft Lavender */
-    --secondary: 240 5% 33%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 263 35% 88%;
+    --secondary-foreground: 263 40% 30%;
 
-    --muted: 240 4% 83%;
-    --muted-foreground: 240 5% 10%;
+    --muted: 210 30% 92%;
+    --muted-foreground: 220 15% 45%;
 
-    /* Accent - Ethereal Lavender */
-    --accent: 355 100% 97%;
-    --accent-foreground: 349 89% 60%;
+    /* Accent - Gentle Lavender */
+    --accent: 270 40% 94%;
+    --accent-foreground: 270 45% 35%;
 
-    --destructive: 0 72% 50%;
-    --destructive-foreground: 0 85% 97%;
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 4% 83%;
-    --input: 240 4% 83%;
-    --ring: 333 71% 50%;
+    --border: 220 20% 88%;
+    --input: 220 20% 90%;
+    --ring: 174 55% 40%;
 
     --radius: 1.5rem;
 
     /* Thought node semantic colors - Psychology-informed */
-    --node-anxious: 25 55% 60%;
-    --node-anxious-foreground: 25 30% 95%;
-    --node-neutral: 200 35% 55%;
-    --node-neutral-foreground: 200 20% 95%;
-    --node-reframed: 158 45% 50%;
-    --node-reframed-foreground: 158 40% 95%;
-    --node-root: 174 55% 40%;
-    --node-root-foreground: 174 50% 98%;
-    --node-noise: 220 15% 40%;
-    --node-noise-foreground: 220 15% 80%;
+    --node-anxious: 25 60% 72%;
+    --node-anxious-foreground: 25 45% 25%;
+    --node-neutral: 200 35% 65%;
+    --node-neutral-foreground: 200 30% 20%;
+    --node-reframed: 158 45% 55%;
+    --node-reframed-foreground: 158 40% 18%;
+    --node-root: 174 55% 42%;
+    --node-root-foreground: 0 0% 100%;
+    --node-noise: 220 15% 75%;
+    --node-noise-foreground: 220 15% 35%;
 
     /* Graph depth cues */
     --depth-primary: 1;
     --depth-secondary: 0.75;
     --depth-tertiary: 0.5;
 
-    /* Therapeutic gradients - Deep and immersive */
-    --calm-gradient: linear-gradient(135deg, hsl(222 47% 11%), hsl(217 33% 17%), hsl(222 47% 14%));
-    --breathe-gradient: linear-gradient(180deg, hsl(222 47% 9%), hsl(217 33% 14%));
-    --midnight-gradient: radial-gradient(ellipse at center, hsl(217 33% 17%), hsl(222 47% 8%));
+    /* Therapeutic gradients - Soft and airy */
+    --calm-gradient: linear-gradient(135deg, hsl(210 40% 98%), hsl(200 30% 96%), hsl(270 25% 97%));
+    --breathe-gradient: linear-gradient(180deg, hsl(200 30% 97%), hsl(210 35% 98%));
+    --midnight-gradient: radial-gradient(ellipse at center, hsl(210 35% 99%), hsl(220 25% 96%));
 
-    /* Glassmorphism overlays */
-    --glass-bg: hsl(217 33% 20% / 0.6);
-    --glass-border: hsl(174 62% 47% / 0.1);
+    /* Glassmorphism overlays - Light version */
+    --glass-bg: hsl(0 0% 100% / 0.7);
+    --glass-border: hsl(174 55% 40% / 0.15);
 
-    /* Glow effects - Bioluminescent */
-    --glow-primary: 0 0 40px hsl(174 62% 47% / 0.25);
-    --glow-calm: 0 0 30px hsl(263 45% 55% / 0.2);
-    --glow-success: 0 0 30px hsl(158 45% 50% / 0.25);
-    --glow-breathing: 0 0 60px hsl(174 62% 47% / 0.35);
+    /* Glow effects - Soft and subtle */
+    --glow-primary: 0 8px 32px hsl(174 55% 40% / 0.15);
+    --glow-calm: 0 6px 24px hsl(263 40% 65% / 0.12);
+    --glow-success: 0 6px 24px hsl(158 45% 55% / 0.15);
+    --glow-breathing: 0 12px 40px hsl(174 55% 40% / 0.2);
 
-    /* Shadows - Soft and ethereal */
-    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+    /* Shadows - Soft and elegant */
+    --shadow-2xs: 0 1px 2px 0px hsl(220 20% 40% / 0.04);
+    --shadow-xs: 0 1px 3px 0px hsl(220 20% 40% / 0.06);
+    --shadow-sm: 0 2px 4px 0px hsl(220 20% 40% / 0.08), 0 1px 2px -1px hsl(220 20% 40% / 0.06);
+    --shadow: 0 4px 8px 0px hsl(220 20% 40% / 0.08), 0 2px 4px -1px hsl(220 20% 40% / 0.06);
+    --shadow-md: 0 6px 12px 0px hsl(220 20% 40% / 0.1), 0 4px 6px -2px hsl(220 20% 40% / 0.08);
+    --shadow-lg: 0 10px 20px 0px hsl(220 20% 40% / 0.1), 0 6px 10px -3px hsl(220 20% 40% / 0.08);
+    --shadow-xl: 0 16px 32px 0px hsl(220 20% 40% / 0.12), 0 8px 16px -4px hsl(220 20% 40% / 0.1);
+    --shadow-2xl: 0 24px 48px 0px hsl(220 20% 40% / 0.15);
 
     /* Typography */
     --font-sans: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
@@ -106,22 +106,22 @@
     --transition-breathe: all 4s cubic-bezier(0.37, 0, 0.63, 1);
 
     /* Sidebar */
-    --sidebar-background: 222 47% 11%;
-    --sidebar-foreground: 240 5% 10%;
-    --sidebar-primary: 333 71% 50%;
-    --sidebar-primary-foreground: 327 73% 97%;
-    --sidebar-accent: 240 5% 33%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 4% 83%;
-    --sidebar-ring: 333 71% 50%;
-    --sidebar: 0 0% 98%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 20%;
+    --sidebar-primary: 174 55% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 263 35% 88%;
+    --sidebar-accent-foreground: 263 40% 30%;
+    --sidebar-border: 220 20% 88%;
+    --sidebar-ring: 174 55% 40%;
+    --sidebar: 0 0% 100%;
 
     /* Charts */
-    --chart-1: 328 85% 70%;
-    --chart-2: 351 94% 71%;
-    --chart-3: 327 87% 81%;
-    --chart-4: 352 95% 81%;
-    --chart-5: 240 3% 46%;
+    --chart-1: 174 55% 45%;
+    --chart-2: 263 40% 65%;
+    --chart-3: 158 45% 55%;
+    --chart-4: 25 55% 65%;
+    --chart-5: 200 35% 60%;
 
     --tracking-normal: 0em;
     --spacing: 0.25rem;
@@ -324,9 +324,9 @@
   }
 
   .glass-strong {
-    background: hsl(217 33% 20% / 0.8);
+    background: hsl(0 0% 100% / 0.85);
     backdrop-filter: blur(20px);
-    border: 1px solid hsl(174 62% 47% / 0.15);
+    border: 1px solid hsl(174 55% 40% / 0.2);
   }
 
   /* Breathing animation for recording */
@@ -337,11 +337,11 @@
   @keyframes breathe-scale {
     0%, 100% {
       transform: scale(1);
-      box-shadow: 0 0 20px hsl(174 62% 47% / 0.2);
+      box-shadow: 0 8px 32px hsl(174 55% 40% / 0.15);
     }
     50% {
       transform: scale(1.15);
-      box-shadow: 0 0 60px hsl(174 62% 47% / 0.4);
+      box-shadow: 0 16px 48px hsl(174 55% 40% / 0.25);
     }
   }
 
@@ -466,9 +466,9 @@
     position: absolute;
     inset: -50%;
     background: 
-      radial-gradient(circle at 20% 30%, hsl(174 62% 47% / 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 80% 70%, hsl(263 45% 55% / 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 50% 50%, hsl(158 45% 50% / 0.03) 0%, transparent 60%);
+      radial-gradient(circle at 20% 30%, hsl(174 55% 45% / 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, hsl(263 40% 70% / 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, hsl(158 45% 55% / 0.05) 0%, transparent 60%);
     animation: ambient-float 20s ease-in-out infinite;
     pointer-events: none;
   }
@@ -503,14 +503,14 @@
 
   .texture-warm {
     background: 
-      radial-gradient(ellipse at 30% 20%, hsl(35 60% 50% / 0.08) 0%, transparent 50%),
-      radial-gradient(ellipse at 70% 80%, hsl(25 50% 45% / 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 30% 20%, hsl(35 60% 75% / 0.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, hsl(25 50% 70% / 0.15) 0%, transparent 50%),
       var(--calm-gradient);
   }
 
   .texture-dark-slate {
     background:
-      linear-gradient(180deg, hsl(220 30% 8%) 0%, hsl(220 25% 12%) 100%);
+      linear-gradient(180deg, hsl(220 25% 92%) 0%, hsl(220 20% 88%) 100%);
   }
 
   /* Luminous node glow */
@@ -520,17 +520,17 @@
   }
 
   .node-glow:hover {
-    box-shadow: 0 0 50px hsl(174 62% 47% / 0.4);
+    box-shadow: 0 12px 40px hsl(174 55% 40% / 0.25);
   }
 
   /* Ethereal card style */
   .ethereal-card {
     background: var(--glass-bg);
     backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid hsl(174 62% 47% / 0.1);
+    border: 1px solid hsl(174 55% 40% / 0.12);
     box-shadow: 
-      0 8px 32px hsl(222 47% 5% / 0.3),
-      inset 0 1px 0 hsl(210 40% 96% / 0.05);
+      0 8px 32px hsl(220 25% 50% / 0.1),
+      inset 0 1px 0 hsl(0 0% 100% / 0.6);
   }
 
   /* Ambient floating orbs animation */
